@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="KyzenAI/KyzenAI.vcxproj" Id="d42a12aa-9918-4ce1-9c71-c2aa57cb3c9f" />
+</Solution>
