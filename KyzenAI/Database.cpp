@@ -1,46 +1,42 @@
 #include "Database.h"
-#include <fstream>
 #include <iostream>
-#include <filesystem>
+#include <algorithm> // Required for std::transform
 
 namespace KyzenDB {
 
     bool load(const std::string& filename) {
-        std::string finalPath = filename;
+        sensitiveWords.clear();
 
-        // Smart filesystem checks we added earlier
-        if (!std::filesystem::exists(finalPath)) {
-            finalPath = "../" + filename;
-        }
-        if (!std::filesystem::exists(finalPath)) {
-            finalPath = "../../" + filename;
-        }
+        // Hardcoded technical hacking database (Zero-file setup)
+        sensitiveWords.insert("reverse shell");
+        sensitiveWords.insert("cmd.exe");
+        sensitiveWords.insert("/bin/sh");
+        sensitiveWords.insert("powershell");
+        sensitiveWords.insert("malware");
+        sensitiveWords.insert("hack");
+        sensitiveWords.insert("netcat");
+        sensitiveWords.insert("nc -e");
+        sensitiveWords.insert("buffer overflow");
+        sensitiveWords.insert("sql injection");
+        sensitiveWords.insert("xxx"); // Temporary testing key
 
-        std::ifstream file(finalPath);
-        if (!file.is_open()) {
-            std::cerr << "[Global DB Error]: Could not find " << filename << "\n";
-            return false;
-        }
-
-        sensitiveWords.clear(); // Empty the set before loading
-        std::string word;
-        while (std::getline(file, word)) {
-            if (!word.empty()) {
-                sensitiveWords.insert(word); // Correct function for unordered_set
-            }
-        }
-        file.close();
+        std::cout << "[Security]: Built-in protection matrix loaded successfully.\n";
         return true;
     }
 
     bool checkSafety(const std::string& input) {
-        // Since we are checking if the user's input sentence CONTAINS a bad word, 
-        // we loop through our set of bad words and use C++23 .contains()
+        // 1. Create a copy of the string to safely modify
+        std::string lowerInput = input;
+
+        // 2. Convert user input to lowercase to prevent capitalization bypasses
+        std::transform(lowerInput.begin(), lowerInput.end(), lowerInput.begin(), ::tolower);
+
+        // 3. Loop through our hash table and scan the string
         for (const auto& badWord : sensitiveWords) {
-            if (input.contains(badWord)) {
-                return false; // Dangerous word found!
+            if (lowerInput.contains(badWord)) {
+                return false; // Malicious term detected!
             }
         }
-        return true; // Input is safe
+        return true; // Safe content
     }
 }

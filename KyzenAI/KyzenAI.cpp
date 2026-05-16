@@ -1,40 +1,37 @@
-// KyzenAI.cpp : This file contains the 'main' function.
-//
-
 #include <iostream>
 #include <string>
 #include "TypeWriter.h"
-#include "Database.h" // Include our global database system
+#include "Database.h"
 
 int main() {
-    // Initialize the global database once at startup
-    if (!KyzenDB::load("sensitive_words.txt")) {
-        TypeWriter("Warning: Booting without security protocols.\n", 20);
-    }
+    // Initialize the built-in protection database layer
+    KyzenDB::load();
 
-    std::string userInput;
-    TypeWriter("Welcome to KyzenAI, your personal AI assistant!\n", 20);
+    std::string userInput = "";
+    TypeWriter("Welcome to KyzenAI, your personal AI assistant!", 20);
 
     while (userInput != "exit" && userInput != "quit") {
-        std::cout << ">>> ";
+        std::cout << "\n>>> ";
         std::getline(std::cin, userInput);
 
-
-        if (userInput == "exit" || userInput == "quit") {
-            break;
+        // Standard exit conditions
+        if (userInput == "exit" || userInput == "quit" || userInput.empty()) {
+            if (userInput == "exit" || userInput == "quit") break;
+            continue;
         }
 
-        TypeWriter("KyzenAi: ", 20);
+        TypeWriter("\nKyzenAi: ", 20);
 
-
-
-        // Use the global database safety check
+        // Run the input through our global safety check
         if (!KyzenDB::checkSafety(userInput)) {
             TypeWriter("Sorry, I can't help you with that.\n", 20);
         }
         else {
             TypeWriter("You said: " + userInput + "\n", 20);
         }
+
+        
+
     }
 
     TypeWriter("Shutting down KyzenAI. Goodbye!\n", 20);
